@@ -186,6 +186,8 @@ share_limits:
     # If the torrent has been active within the last x minutes, it will change the share limits back to no limits and resume the torrent to continue seeding.
     # Will default to 0 if not specified for the group.
     last_active: 43200
+    # <OPTIONAL> Limit Upload Speed <int>: Will limit the download speed KiB/s (KiloBytes/second) (`-1` : No Limit)
+    limit_download_speed: 0
     # <OPTIONAL> Limit Upload Speed <int>: Will limit the upload speed KiB/s (KiloBytes/second) (`-1` : No Limit)
     limit_upload_speed: 0
     # <OPTIONAL> cleanup <bool>: WARNING!! Setting this as true Will remove and delete contents of any torrents that satisfies the share limits
