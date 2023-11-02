@@ -33,6 +33,7 @@ COMMANDS = [
     "skip_cleanup",
     "skip_qb_version_check",
     "dry_run",
+    "on_add",
 ]
 
 
@@ -88,6 +89,7 @@ class Config:
                 logger.debug(f"    --skip-cleanup (QBT_SKIP_CLEANUP): {self.commands['skip_cleanup']}")
                 logger.debug(f"    --skip-qb-version-check (QBT_SKIP_QB_VERSION_CHECK): {self.commands['skip_qb_version_check']}")
                 logger.debug(f"    --dry-run (QBT_DRY_RUN): {self.commands['dry_run']}")
+                logger.debug(f"    --on-add (QBT_ON_ADD): {self.commands['on_add']}")
         else:
             self.commands = args
 
@@ -148,6 +150,7 @@ class Config:
             self.data["share_limits"] = self.data.pop("share_limits")
 
         self.dry_run = self.commands["dry_run"]
+        self.on_add = self.commands["on_add"]
         self.loglevel = "DRYRUN" if self.dry_run else "INFO"
         self.session = requests.Session()
 

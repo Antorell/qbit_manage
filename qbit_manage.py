@@ -186,6 +186,17 @@ parser.add_argument(
     help="If you would like to see what is gonna happen but not actually move/delete or tag/categorize anything.",
 )
 parser.add_argument(
+    "-oa",
+    "--on-add",
+    dest="on_add",
+    action="store_true",
+    default=False,
+    help=(
+        "Enables share_limit to only set limits to newly added torrent (qbittorrent >4.5.0)."
+        "Changes share_limit's status_filter to only check Downloading/Checking torrents."
+    ),
+)
+parser.add_argument(
     "-ll", "--log-level", dest="log_level", action="store", default="INFO", type=str, help="Change your log level."
 )
 parser.add_argument(
@@ -264,6 +275,7 @@ divider = get_arg("QBT_DIVIDER", args.divider)
 screen_width = get_arg("QBT_WIDTH", args.width, arg_int=True)
 debug = get_arg("QBT_DEBUG", args.debug, arg_bool=True)
 trace = get_arg("QBT_TRACE", args.trace, arg_bool=True)
+on_add = get_arg("QBT_ON_ADD", args.on_add, arg_bool=True)
 
 if debug:
     log_level = "DEBUG"
@@ -313,6 +325,7 @@ for v in [
     "screen_width",
     "debug",
     "trace",
+    "on_add",
 ]:
     args[v] = eval(v)
 
@@ -628,6 +641,7 @@ if __name__ == "__main__":
     logger.debug(f"    --width (QBT_WIDTH): {screen_width}")
     logger.debug(f"    --debug (QBT_DEBUG): {debug}")
     logger.debug(f"    --trace (QBT_TRACE): {trace}")
+    logger.debug(f"    --on-add (QBT_ON_ADD): {on_add}")
     logger.debug("")
     try:
         if run:
