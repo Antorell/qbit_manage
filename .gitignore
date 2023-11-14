@@ -12,4 +12,3 @@ __pycache__/
 qbit_manage.egg-info/
 .tox
 *.env
-venv
