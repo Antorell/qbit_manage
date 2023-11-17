@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from time import time
+from time import time,sleep
 
 from modules import util
 from modules.util import is_tag_in_torrent
@@ -39,7 +39,7 @@ class ShareLimits:
     def update_share_limits(self):
         """Updates share limits for torrents based on grouping"""
         logger.separator("Updating Share Limits based on priority", space=False, border=False)
-        torrent_list = self.qbt.get_torrents({"status_filter": "downloading"} if self.config.on_add else {"status_filter": "completed"})
+        torrent_list = self.qbt.get_torrents({sleep(1)} and {"status_filter": "downloading"} if self.config.on_add else {"status_filter": "completed"})
         self.assign_torrents_to_group(torrent_list)
         for group_name, group_config in self.share_limits_config.items():
             torrents = group_config["torrents"]

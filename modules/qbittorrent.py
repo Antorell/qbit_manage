@@ -158,7 +158,7 @@ class Qbt:
                 is_complete = torrent_is_complete
                 first_hash = torrent_hash
             for trk in torrent_trackers:
-                if trk.url.startswith("http"):
+                if trk.url.startswith(("http", "udp", "ws")):
                     status = trk.status
                     msg = trk.msg.upper()
                     if TrackerStatus(trk.status) == TrackerStatus.WORKING:
@@ -201,7 +201,7 @@ class Qbt:
 
     def get_tags(self, trackers):
         """Get tags from config file based on keyword"""
-        urls = [x.url for x in trackers if x.url.startswith("http")]
+        urls = [x.url for x in trackers if x.url.startswith(("http", "udp", "ws"))]
         tracker = {}
         tracker["tag"] = None
         tracker["cat"] = None
