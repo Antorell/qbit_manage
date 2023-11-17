@@ -1,6 +1,6 @@
 import os
 from datetime import timedelta
-from time import time,sleep
+from time import time, sleep
 
 from modules import util
 from modules.util import is_tag_in_torrent
