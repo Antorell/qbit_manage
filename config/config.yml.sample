@@ -17,7 +17,7 @@ commands:
   share_limits: False
   skip_qb_version_check: False
   skip_cleanup: False
-  on_add: False
+  on_add: False # set to True when launching qbit_manage using qBittorrent "Run on torrent added" option.
 
 qbt:
   # qBittorrent parameters
@@ -195,6 +195,9 @@ share_limits:
     cleanup: false
     # <OPTIONAL> resume_torrent_after_change <bool>: This variable will resume your torrent after changing share limits. Default is true
     resume_torrent_after_change: true
+    # <OPTIONAL> set_force_start <bool>: This variable will set the torrent in force resume mode to allow bypassing any limitation imposed
+    # by the Torrent qeueing settings. Only works when qbit_manage is launched using qBittorrent "run on torrent added" option. Default is false
+    set_force_start: false
     # <OPTIONAL> add_group_to_tag <bool>: This adds your grouping as a tag with a prefix defined in settings . Default is true
     # Example: A grouping defined as noHL will have a tag set to ~share_limit.noHL (if using the default prefix)
     add_group_to_tag: true

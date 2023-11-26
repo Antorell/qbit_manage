@@ -488,6 +488,16 @@ class Config:
                     do_print=False,
                     save=False,
                 )
+                self.share_limits[group]["set_force_start"] = self.util.check_for_attribute(
+                    self.data,
+                    "set_force_start",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="bool",
+                    default_is_none=True,
+                    do_print=False,
+                    save=False,
+                )
                 self.share_limits[group]["torrents"] = []
         else:
             if self.commands["share_limits"]:

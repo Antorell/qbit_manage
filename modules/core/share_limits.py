@@ -277,6 +277,10 @@ class ShareLimits:
         if torrent.state_enum.is_complete and group_config["resume_torrent_after_change"]:
             if not self.config.dry_run:
                 torrent.resume()
+        # Enable force start for the torrent - only only activates for downloading torrent without any share-limit sets.
+        if torrent.state_enum.is_downloading and group_config["set_force_start"] is True:
+            if not self.config.dry_run:
+                torrent.set_force_start(True)
 
     def assign_torrents_to_group(self, torrent_list):
         """Assign torrents to a share limit group based on its tags and category"""
