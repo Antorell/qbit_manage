@@ -494,7 +494,7 @@ class Config:
                     parent="share_limits",
                     subparent=group,
                     var_type="bool",
-                    default_is_none=True,
+                    default=False,
                     do_print=False,
                     save=False,
                 )
