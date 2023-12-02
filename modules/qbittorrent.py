@@ -21,8 +21,10 @@ class Qbt:
     Qbittorrent Class
     """
 
-    SUPPORTED_VERSION = Version.latest_supported_app_version()
-    MIN_SUPPORTED_VERSION = "v4.3.0"
+    SUPPORTED_APP_VERSION = Version.latest_supported_app_version()
+    SUPPORTED_WEBAPI_VERSION = Version.latest_supported_api_version()
+    MIN_SUPPORTED_APP_VERSION = "v4.3.0"
+    MIN_SUPPORTED_WEBAPI_VERSION = "2.6"
     TORRENT_DICT_COMMANDS = ["recheck", "cross_seed", "rem_unregistered", "tag_tracker_error", "tag_nohardlinks", "share_limits"]
 
     def __init__(self, config, params):
@@ -43,23 +45,24 @@ class Qbt:
                 REQUESTS_ARGS={"timeout": (45, 60)},
             )
             self.client.auth_log_in()
-            self.current_version = self.client.app.version
-            logger.debug(f"qBittorrent: {self.current_version}")
-            logger.debug(f"qBittorrent Web API: {self.client.app.web_api_version}")
-            logger.debug(f"qbit_manage supported versions: {self.MIN_SUPPORTED_VERSION} - {self.SUPPORTED_VERSION}")
-            if self.current_version < self.MIN_SUPPORTED_VERSION:
+            self.current_app_version = self.client.app.version
+            self.current_webapi_version = self.client.app.web_api_version
+            logger.debug(f"qBittorrent: {self.current_app_version}")
+            logger.debug(f"qBittorrent Web API: {self.current_webapi_version}")
+            logger.debug(f"qbit_manage supported Web API versions: {self.MIN_SUPPORTED_WEBAPI_VERSION} - {self.SUPPORTED_WEBAPI_VERSION}")
+            if self.current_webapi_version < self.MIN_SUPPORTED_WEBAPI_VERSION:
                 ex = (
-                    f"Qbittorrent Error: qbit_manage is only compatible with {self.MIN_SUPPORTED_VERSION} or higher. "
-                    f"You are currently on {self.current_version}."
+                    f"Error: qbit_manage is only compatible with {self.MIN_SUPPORTED_WEBAPI_VERSION} or higher. "
+                    f"You are currently on {self.current_webapi_version}."
                     + "\n"
-                    + f"Please upgrade your qBittorrent version to {self.MIN_SUPPORTED_VERSION} or higher to use qbit_manage."
+                    + f"Please upgrade your qBittorrent version to {self.MIN_SUPPORTED_APP_VERSION} or higher to use qbit_manage."
                 )
-            elif not Version.is_app_version_supported(self.current_version):
+            elif not Version.is_api_version_supported(self.current_webapi_version):
                 ex = (
-                    f"Qbittorrent Error: qbit_manage is only compatible with {self.SUPPORTED_VERSION} or lower. "
-                    f"You are currently on {self.current_version}."
+                    f"Error: qbit_manage is only compatible with Web API {self.SUPPORTED_WEBAPI_VERSION} or lower. "
+                    f"You are currently using {self.current_webapi_version}."
                     + "\n"
-                    + f"Please downgrade your qBittorrent version to {self.SUPPORTED_VERSION} to use qbit_manage."
+                    + f"Please downgrade your qBittorrent version to {self.SUPPORTED_APP_VERSION} to use qbit_manage."
                 )
             if ex:
                 if self.config.commands["skip_qb_version_check"]:
