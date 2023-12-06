@@ -103,7 +103,7 @@ class RemoveUnregistered:
             check_tags = util.get_list(torrent.tags)
             try:
                 for trk in torrent.trackers:
-                    if trk.url.startswith(("http", "udp", "ws")):
+                    if trk.url.startswith("http"):
                         tracker = self.qbt.get_tags([trk])
                         msg_up = trk.msg.upper()
                         msg = trk.msg
