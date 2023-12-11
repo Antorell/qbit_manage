@@ -64,7 +64,7 @@ class ShareLimits:
                 }
                 if len(self.torrents_updated) > 0:
                     self.config.send_notifications(attr)
-                if group_config["cleanup"] and len(self.tdel_dict) > 0:
+                if not self.config.on_add and group_config["cleanup"] and len(self.tdel_dict) > 0:
                     self.cleanup_torrents_for_group(group_name, group_config["priority"])
 
     def cleanup_torrents_for_group(self, group_name, priority):
@@ -250,7 +250,7 @@ class ShareLimits:
             )
             # Cleanup torrents if the torrent meets the criteria for deletion and cleanup is enabled
             if group_config["cleanup"]:
-                if tor_reached_seed_limit:
+                if not self.config.on_add and tor_reached_seed_limit:
                     if t_hash not in self.tdel_dict:
                         self.tdel_dict[t_hash] = {}
                     self.tdel_dict[t_hash]["torrent"] = torrent

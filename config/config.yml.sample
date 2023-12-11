@@ -17,7 +17,7 @@ commands:
   share_limits: False
   skip_qb_version_check: False
   skip_cleanup: False
-  on_add: False # set to True when launching qbit_manage using qBittorrent "Run on torrent added" option.
+  on_add: False # Set to True when launching qbit_manage from the qBittorrent "Run on torrent added" option. Use scheduler/systemd.timer with on_add=False to do torrents maintenance. 
 
 qbt:
   # qBittorrent parameters
