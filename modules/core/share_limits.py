@@ -196,7 +196,7 @@ class ShareLimits:
             share_limits_not_yet_tagged = (
                 True if self.group_tag and not is_tag_in_torrent(self.group_tag, torrent.tags) else False
             )
-            if group_config["set_force_start"] and torrent.state_enum.is_complete:
+            if not self.config.on_add and group_config["set_force_start"] and torrent.state_enum.is_complete:
                 torrent.set_force_start(False)
             logger.trace(f"Torrent: {t_name} [Hash: {t_hash}]")
             logger.trace(f"Torrent Category: {torrent.category}")
@@ -276,11 +276,11 @@ class ShareLimits:
             tags=self.group_tag,
         )
         # Resume torrent if it was paused now that the share limit has changed
-        if torrent.state_enum.is_complete and group_config["resume_torrent_after_change"]:
+        if group_config["resume_torrent_after_change"] and torrent.state_enum.is_complete:
             if not self.config.dry_run:
                 torrent.resume()
         # Enable force start for the torrent - only only activates for downloading torrent without any share-limit sets.
-        if torrent.state_enum.is_downloading and group_config["set_force_start"]:
+        if group_config["set_force_start"] and torrent.state_enum.is_downloading:
             if not self.config.dry_run:
                 torrent.set_force_start(True)
 
