@@ -216,7 +216,7 @@ class Config:
 
         self.apprise_factory = None
         if "apprise" in self.data:
-            if self.data["apprise"] is not None:
+            if self.data["apprise"] is not None and self.data["apprise"].get("api_url") is not None:
                 logger.info("Connecting to Apprise...")
                 try:
                     self.apprise_factory = Apprise(
@@ -236,7 +236,7 @@ class Config:
 
         self.notifiarr_factory = None
         if "notifiarr" in self.data:
-            if self.data["notifiarr"] is not None:
+            if self.data["notifiarr"] is not None and self.data["notifiarr"].get("apikey") is not None:
                 logger.info("Connecting to Notifiarr...")
                 try:
                     self.notifiarr_factory = Notifiarr(
@@ -263,7 +263,7 @@ class Config:
 
         self.beyond_hd = None
         if "bhd" in self.data:
-            if self.data["bhd"] is not None:
+            if self.data["bhd"] is not None and self.data["bhd"].get("apikey") is not None:
                 logger.info("Connecting to BHD API...")
                 try:
                     self.beyond_hd = BeyondHD(
