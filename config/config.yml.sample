@@ -17,7 +17,7 @@ commands:
   share_limits: False
   skip_qb_version_check: False
   skip_cleanup: False
-
+  on_add: False # Set to True when launching qbit_manage from the qBittorrent "Run on torrent added" option. Use scheduler/systemd.timer with on_add=False to do torrents maintenance.
 qbt:
   # qBittorrent parameters
   host: "localhost:8080"
@@ -188,6 +188,11 @@ share_limits:
     categories:
       - RadarrComplete
       - SonarrComplete
+    # <OPTIONAL> set_force_start <bool>: This variable will set the torrent in force resume mode to allow bypassing any limitation imposed
+    # by the Torrent qeueing settings. Only works when qbit_manage is launched using qBittorrent "run on torrent added" option. Default is false
+    set_force_start: false
+    # <OPTIONAL> Limit Download Speed <int>: Will limit the download speed KiB/s (KiloBytes/second) (`-1` : No Limit)
+    limit_download_speed: 0
     # <OPTIONAL> max_ratio <float>: Will set the torrent Maximum share ratio until torrent is stopped from seeding/uploading and may be cleaned up / removed if the minimums have been met.
     # Will default to -1 (no limit) if not specified for the group.
     max_ratio: 5.0
