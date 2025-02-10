@@ -338,7 +338,7 @@ class ShareLimits:
     def set_tags_and_limits(self, torrent, max_ratio, max_seeding_time, limit_download_speed=None, limit_upload_speed=None, tags=None, do_print=True):
         """Set tags and limits for a torrent"""
         body = []
-        if limit_download_speed is not None:
+        if limit_download_speed is not None and not torrent.state_enum.is_complete:
             if limit_download_speed != -1:
                 msg = logger.insert_space(f"Limit DL Speed: {limit_download_speed} kB/s", 1)
                 if do_print:
@@ -389,7 +389,7 @@ class ShareLimits:
             if tags and not is_tag_in_torrent(tags, torrent.tags):
                 torrent.add_tags(tags)
             torrent_download_limit = -1 if round(torrent.dl_limit / 1024) == 0 else round(torrent.dl_limit / 1024)
-            if limit_download_speed is not None and limit_download_speed != torrent_download_limit:
+            if limit_download_speed is not None and limit_download_speed != torrent_download_limit and not torrent.state_enum.is_complete:
                 if limit_download_speed == -1:
                     torrent.set_download_limit(-1)
                 else:
