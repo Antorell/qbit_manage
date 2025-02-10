@@ -340,7 +340,7 @@ class ShareLimits:
         body = []
         if limit_download_speed is not None:
             if limit_download_speed != -1:
-                msg = logger.insert_space(f"Limit UL Speed: {limit_download_speed} kB/s", 1)
+                msg = logger.insert_space(f"Limit DL Speed: {limit_download_speed} kB/s", 1)
                 if do_print:
                     body += logger.print_line(msg, self.config.loglevel)
                 else:
