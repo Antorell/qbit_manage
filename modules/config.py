@@ -34,6 +34,7 @@ COMMANDS = [
     "skip_cleanup",
     "skip_qb_version_check",
     "dry_run",
+    "on_add",
 ]
 
 
@@ -103,6 +104,7 @@ class Config:
                 logger.debug(f"    --skip-cleanup (QBT_SKIP_CLEANUP): {self.commands['skip_cleanup']}")
                 logger.debug(f"    --skip-qb-version-check (QBT_SKIP_QB_VERSION_CHECK): {self.commands['skip_qb_version_check']}")
                 logger.debug(f"    --dry-run (QBT_DRY_RUN): {self.commands['dry_run']}")
+                logger.debug(f"    --on-add (QBT_ON_ADD): {self.commands['on_add']}")
                 logger.separator(loglevel="DEBUG")
 
         else:
@@ -131,6 +133,7 @@ class Config:
             logger.debug(f"    --skip-cleanup (QBT_SKIP_CLEANUP): {args['skip_cleanup']}")
             logger.debug(f"    --skip-qb-version-check (QBT_SKIP_QB_VERSION_CHECK): {args['skip_qb_version_check']}")
             logger.debug(f"    --dry-run (QBT_DRY_RUN): {args['dry_run']}")
+            logger.debug(f"    --on-add (QBT_ON_ADD): {self.commands['on_add']}")
             logger.separator(loglevel="DEBUG")
 
         if "qbt" in self.data:
@@ -189,6 +192,7 @@ class Config:
         if "share_limits" in self.data:
             self.data["share_limits"] = self.data.pop("share_limits")
 
+        self.on_add = self.commands["on_add"]
         self.dry_run = self.commands["dry_run"]
         self.loglevel = "DRYRUN" if self.dry_run else "INFO"
         self.session = requests.Session()
@@ -516,6 +520,27 @@ class Config:
                     do_print=False,
                     save=False,
                 )
+                self.share_limits[group]["limit_download_speed"] = self.util.check_for_attribute(
+                    self.data,
+                    "limit_download_speed",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="int",
+                    min_int=-1,
+                    default=0,
+                    do_print=False,
+                    save=False,
+                )
+                self.share_limits[group]["enable_group_download_speed"] = self.util.check_for_attribute(
+                    self.data,
+                    "enable_group_download_speed",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="bool",
+                    default=False,
+                    do_print=False,
+                    save=False,
+                )
                 self.share_limits[group]["limit_upload_speed"] = self.util.check_for_attribute(
                     self.data,
                     "limit_upload_speed",
@@ -576,6 +601,16 @@ class Config:
                     subparent=group,
                     var_type="bool",
                     default=True,
+                    do_print=False,
+                    save=False,
+                )
+                self.share_limits[group]["set_force_start"] = self.util.check_for_attribute(
+                    self.data,
+                    "set_force_start",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="bool",
+                    default=False,
                     do_print=False,
                     save=False,
                 )
