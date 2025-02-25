@@ -24,7 +24,8 @@ class RemoveOrphaned:
         self.executor.shutdown()
 
     def rem_orphaned(self):
-        sleep(10)
+        if self.config.commands["rem_unregistered"] and self.config.commands["run"]:
+            sleep(10)
         """Remove orphaned files from remote directory"""
         self.stats = 0
         logger.separator("Checking for Orphaned Files", space=False, border=False)
