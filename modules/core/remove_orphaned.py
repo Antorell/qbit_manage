@@ -1,7 +1,7 @@
 import os
 from concurrent.futures import ThreadPoolExecutor
 from fnmatch import fnmatch
-
+from time import sleep
 from modules import util
 
 logger = util.logger
@@ -24,6 +24,8 @@ class RemoveOrphaned:
         self.executor.shutdown()
 
     def rem_orphaned(self):
+        if self.config.commands["rem_unregistered"] and self.config.commands["run"]:
+            sleep(10)
         """Remove orphaned files from remote directory"""
         self.stats = 0
         logger.separator("Checking for Orphaned Files", space=False, border=False)
