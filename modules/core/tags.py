@@ -38,7 +38,7 @@ class Tags:
                 or (torrent.state == "stalledDL" and not util.is_tag_in_torrent(self.stalled_tag, torrent.tags))
             ):
                 stalled = False
-                if torrent.state == "stalledDL":
+                if torrent.state == "stalledDL" and self.config.settings["tag_stalled_torrents"]:
                     stalled = True
                     tracker["tag"].append(self.stalled_tag)
                 if tracker["tag"] or stalled:
