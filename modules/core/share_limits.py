@@ -19,8 +19,8 @@ class ShareLimits:
         # meets the criteria for ratio limit/seed limit for deletion
         self.stats_deleted_contents = 0  # counter for the number of torrents that  \
         # meets the criteria for ratio limit/seed limit for deletion including contents \
-        self.status_filter = "completed" if self.config.settings["share_limits_filter_completed"] else "all"
-
+        if not self.config.args["on_add"] or self.config.args["sch"]:
+            self.status_filter = "completed" if self.config.settings["share_limits_filter_completed"] else "all"
         # dictionary to track the torrent names and content path that meet the deletion criteria
         self.tdel_dict = {}
         self.root_dir = qbit_manager.config.root_dir  # root directory of torrents
@@ -47,7 +47,8 @@ class ShareLimits:
     def update_share_limits(self):
         """Updates share limits for torrents based on grouping"""
         logger.separator("Updating Share Limits based on priority", space=False, border=False)
-        torrent_list = self.qbt.get_torrents({"status_filter": self.status_filter})
+        torrent_list = (self.qbt.get_torrents({"status_filter": "checking"}) or self.qbt.get_torrents({"status_filter": "downloading"})
+                        ) if self.config.args["run"] and self.config.args["on_add"] else self.qbt.get_torrents({"status_filter": self.status_filter})
         self.assign_torrents_to_group(torrent_list)
         for group_name, group_config in self.share_limits_config.items():
             torrents = group_config["torrents"]
@@ -66,6 +67,7 @@ class ShareLimits:
                     "torrent_max_seeding_time": group_config["max_seeding_time"],
                     "torrent_min_seeding_time": group_config["min_seeding_time"],
                     "torrent_min_num_seeds": group_config["min_num_seeds"],
+                    "torrent_limit_download_speed": group_config["limit_download_speed"],
                     "torrent_limit_upload_speed": group_config["limit_upload_speed"],
                     "torrent_last_active": group_config["last_active"],
                 }
@@ -185,7 +187,7 @@ class ShareLimits:
             f"Updating Share Limits for [Group {group_name}] [Priority {group_config['priority']}]", space=False, border=False
         )
         group_upload_speed = group_config["limit_upload_speed"]
-
+        group_download_speed = group_config["limit_download_speed"]
         for torrent in torrents:
             t_name = torrent.name
             t_hash = torrent.hash
@@ -201,6 +203,22 @@ class ShareLimits:
             check_max_seeding_time = group_config["max_seeding_time"] != torrent.max_seeding_time
             # Treat upload limit as -1 if it is set to 0 (unlimited)
             torrent_upload_limit = -1 if round(torrent.up_limit / 1024) == 0 else round(torrent.up_limit / 1024)
+            if self.config.args["run"] and self.config.args["on_add"]:
+                # Treat download limit as -1 if it is set to 0 (unlimited)
+                torrent_download_limit = -1 if round(torrent.dl_limit / 1024) == 0 else round(torrent.dl_limit / 1024)
+                if group_config["limit_download_speed"] <= 0:
+                    group_config["limit_download_speed"] = -1
+                else:
+                    if group_config["enable_group_download_speed"]:
+                        logger.trace(
+                            "enable_group_download_speed set to True.\n"
+                            f"Setting limit_download_speed to {group_download_speed} / {len(torrents)} = "
+                            f"{round(group_download_speed / len(torrents))} kB/s"
+                        )
+                        group_config["limit_download_speed"] = round(group_download_speed / len(torrents))
+                check_limit_download_speed = group_config["limit_download_speed"] != torrent_download_limit
+            else:
+                check_limit_download_speed = False
             if group_config["limit_upload_speed"] <= 0:
                 group_config["limit_upload_speed"] = -1
             else:
@@ -264,6 +282,12 @@ class ShareLimits:
             )
             logger.trace(f"Config Min Num Seeds vs Torrent Num Seeds: {group_config['min_num_seeds']} vs {torrent.num_complete}")
             logger.trace(f"check_max_seeding_time: {check_max_seeding_time}")
+            if self.config.args["run"] and self.config.args["on_add"]:
+                logger.trace(
+                    "Config Limit download Speed vs Torrent Limit download Speed: "
+                    f"{group_config['limit_download_speed']} vs {torrent_download_limit}"
+                )
+                logger.trace(f"check_limit_download_speed: {check_limit_download_speed}")
             logger.trace(
                 "Config Limit Upload Speed vs Torrent Limit Upload Speed: "
                 f"{group_config['limit_upload_speed']} vs {torrent_upload_limit}"
@@ -290,6 +314,7 @@ class ShareLimits:
             if (
                 check_max_ratio
                 or check_max_seeding_time
+                or check_limit_download_speed
                 or check_limit_upload_speed
                 or share_limits_not_yet_tagged
                 or check_multiple_share_limits_tag
@@ -313,7 +338,7 @@ class ShareLimits:
 
             # Cleanup torrents if the torrent meets the criteria for deletion and cleanup is enabled
             if group_config["cleanup"]:
-                if tor_reached_seed_limit:
+                if tor_reached_seed_limit and torrent.state_enum.is_complete:
                     if t_hash not in self.tdel_dict:
                         self.tdel_dict[t_hash] = {}
                     self.tdel_dict[t_hash]["torrent"] = torrent
@@ -338,6 +363,7 @@ class ShareLimits:
             torrent=torrent,
             max_ratio=group_config["max_ratio"],
             max_seeding_time=group_config["max_seeding_time"],
+            limit_download_speed=group_config["limit_download_speed"],
             limit_upload_speed=group_config["limit_upload_speed"],
             tags=self.group_tag,
         )
@@ -397,9 +423,13 @@ class ShareLimits:
                 return False
         return True
 
-    def set_tags_and_limits(self, torrent, max_ratio, max_seeding_time, limit_upload_speed=None, tags=None, do_print=True):
+    def set_tags_and_limits(self, torrent, max_ratio, max_seeding_time, limit_download_speed=None, limit_upload_speed=None, tags=None, do_print=True):
         """Set tags and limits for a torrent"""
         body = []
+        if self.config.args["run"] and self.config.args["on_add"] and limit_download_speed is not None:
+            if limit_download_speed != -1:
+                msg = logger.insert_space(f"Limit DL Speed: {limit_download_speed} kB/s", 1)
+                body.append(msg)
         if limit_upload_speed is not None:
             if limit_upload_speed != -1:
                 msg = logger.insert_space(f"Limit UL Speed: {limit_upload_speed} kB/s", 1)
@@ -427,6 +457,13 @@ class ShareLimits:
         if not self.config.dry_run:
             if tags:
                 torrent.add_tags(tags)
+            if self.config.args["run"] and self.config.args["on_add"]:
+                torrent_download_limit = -1 if round(torrent.dl_limit / 1024) == 0 else round(torrent.dl_limit / 1024)
+                if limit_download_speed is not None and limit_download_speed != torrent_download_limit:
+                    if limit_download_speed == -1:
+                        torrent.set_download_limit(-1)
+                    else:
+                        torrent.set_download_limit(limit_download_speed * 1024)
             torrent_upload_limit = -1 if round(torrent.up_limit / 1024) == 0 else round(torrent.up_limit / 1024)
             if limit_upload_speed is not None and limit_upload_speed != torrent_upload_limit:
                 if limit_upload_speed == -1:

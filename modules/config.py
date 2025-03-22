@@ -101,6 +101,7 @@ class Config:
                 logger.debug(f"    --skip-cleanup (QBT_SKIP_CLEANUP): {self.commands['skip_cleanup']}")
                 logger.debug(f"    --skip-qb-version-check (QBT_SKIP_QB_VERSION_CHECK): {self.commands['skip_qb_version_check']}")
                 logger.debug(f"    --dry-run (QBT_DRY_RUN): {self.commands['dry_run']}")
+                logger.debug(f"    --on-add (QBT_ON_ADD): {args['on_add']}")
                 logger.separator(loglevel="DEBUG")
 
         else:
@@ -128,6 +129,7 @@ class Config:
             logger.debug(f"    --skip-cleanup (QBT_SKIP_CLEANUP): {args['skip_cleanup']}")
             logger.debug(f"    --skip-qb-version-check (QBT_SKIP_QB_VERSION_CHECK): {args['skip_qb_version_check']}")
             logger.debug(f"    --dry-run (QBT_DRY_RUN): {args['dry_run']}")
+            logger.debug(f"    --on-add (QBT_ON_ADD): {args['on_add']}")
             logger.separator(loglevel="DEBUG")
 
         if "qbt" in self.data:
@@ -514,6 +516,27 @@ class Config:
                     var_type="time_parse",
                     min_int=0,
                     default=0,
+                    do_print=False,
+                    save=False,
+                )
+                self.share_limits[group]["limit_download_speed"] = self.util.check_for_attribute(
+                    self.data,
+                    "limit_download_speed",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="int",
+                    min_int=-1,
+                    default=0,
+                    do_print=False,
+                    save=False,
+                )
+                self.share_limits[group]["enable_group_download_speed"] = self.util.check_for_attribute(
+                    self.data,
+                    "enable_group_download_speed",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="bool",
+                    default=False,
                     do_print=False,
                     save=False,
                 )

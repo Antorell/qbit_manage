@@ -211,7 +211,11 @@ share_limits:
     # 32m, 2h32m, 3d2h32m, 1w3d2h32m
     # Will default to 0 if not specified for the group.
     last_active: 30d
-    # <OPTIONAL> Limit Upload Speed <int>: Will limit the upload speed KiB/s (KiloBytes/second) (`-1` : No Limit)
+    # <OPTIONAL> Limit download Speed <int>: Will limit the download speed KiB/s (KiloBytes/second) (`-1` : No Limit)
+    limit_download_speed: 0
+    # <OPTIONAL> Enable Group download Speed <bool>: download speed limits are applied at the group level. This will take limit_download_speed defined and divide it equally among the number of torrents in the group.
+    enable_group_download_speed: false
+       # <OPTIONAL> Limit Upload Speed <int>: Will limit the upload speed KiB/s (KiloBytes/second) (`-1` : No Limit)
     limit_upload_speed: 0
     # <OPTIONAL> Enable Group Upload Speed <bool>: Upload speed limits are applied at the group level. This will take limit_upload_speed defined and divide it equally among the number of torrents in the group.
     enable_group_upload_speed: false
@@ -228,7 +232,7 @@ share_limits:
     min_num_seeds: 0
     # <OPTIONAL> custom_tag <str>: Apply a custom tag name for this particular group. **WARNING (This tag MUST be unique as it will be used to determine share limits. Please ensure it does not overlap with any other tags in qbt)**
     custom_tag: sharelimits_noHL
-  cross-seed:
+ cross-seed:
     priority: 2
     include_all_tags:
       - cross-seed
