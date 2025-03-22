@@ -191,6 +191,8 @@ class ShareLimits:
         for torrent in torrents:
             t_name = torrent.name
             t_hash = torrent.hash
+            if group_config["set_force_start"] and not (self.config.args["on_add"] or torrent.state_enum.is_downloading):
+                torrent.set_force_start(False)
             if group_config["add_group_to_tag"]:
                 if group_config["custom_tag"]:
                     self.group_tag = group_config["custom_tag"]
@@ -371,6 +373,11 @@ class ShareLimits:
         if torrent.state_enum.is_complete and group_config["resume_torrent_after_change"]:
             if not self.config.dry_run:
                 torrent.resume()
+        # Enable force start for the torrent - only only activates for downloading torrent without any share-limit sets.
+        if group_config["set_force_start"] and self.config.args["on_add"] and (
+                torrent.state_enum.is_checking or torrent.state_enum.is_downloading):
+            if not self.config.dry_run:
+                torrent.set_force_start(True)
 
     def assign_torrents_to_group(self, torrent_list):
         """Assign torrents to a share limit group based on its tags and category"""

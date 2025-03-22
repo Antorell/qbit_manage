@@ -232,7 +232,10 @@ share_limits:
     min_num_seeds: 0
     # <OPTIONAL> custom_tag <str>: Apply a custom tag name for this particular group. **WARNING (This tag MUST be unique as it will be used to determine share limits. Please ensure it does not overlap with any other tags in qbt)**
     custom_tag: sharelimits_noHL
- cross-seed:
+    # <OPTIONAL> set_force_start <bool>: This variable will set the torrent in force resume mode to allow bypassing any limitation imposed
+    # by the Torrent qeueing settings. Only works when qbit_manage is launched using qBittorrent "run on torrent added" option. Default is false
+    set_force_start: false
+  cross-seed:
     priority: 2
     include_all_tags:
       - cross-seed

@@ -612,6 +612,16 @@ class Config:
                     do_print=False,
                     save=False,
                 )
+                self.share_limits[group]["set_force_start"] = self.util.check_for_attribute(
+                    self.data,
+                    "set_force_start",
+                    parent="share_limits",
+                    subparent=group,
+                    var_type="bool",
+                    default=False,
+                    do_print=False,
+                    save=False,
+                )
                 if self.share_limits[group]["custom_tag"]:
                     if (
                         self.share_limits[group]["custom_tag"] not in self.share_limits_custom_tags
