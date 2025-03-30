@@ -193,8 +193,6 @@ class ShareLimits:
         for torrent in torrents:
             t_name = torrent.name
             t_hash = torrent.hash
-            if group_config["set_force_start"] and not (self.arg_onadd or torrent.state_enum.is_downloading):
-                torrent.set_force_start(False)
             if group_config["add_group_to_tag"]:
                 if group_config["custom_tag"]:
                     self.group_tag = group_config["custom_tag"]
@@ -349,6 +347,13 @@ class ShareLimits:
                     self.tdel_dict[t_hash]["content_path"] = torrent["content_path"].replace(self.root_dir, self.remote_dir)
                     self.tdel_dict[t_hash]["body"] = tor_reached_seed_limit
             self.torrent_hash_checked.append(t_hash)
+            # Enable force start for the torrent - only only activates for downloading torrent without any share-limit sets.
+            if group_config["set_force_start"]:
+                if self.arg_onadd and (torrent.state_enum.is_checking or torrent.state_enum.is_downloading):
+                    if not self.config.dry_run:
+                        torrent.set_force_start(True)
+                else:
+                    torrent.set_force_start(False)
 
     def tag_and_update_share_limits_for_torrent(self, torrent, group_config):
         """Removes previous share limits tag, updates tag and share limits for a torrent, and resumes the torrent"""
@@ -375,11 +380,6 @@ class ShareLimits:
         if torrent.state_enum.is_complete and group_config["resume_torrent_after_change"]:
             if not self.config.dry_run:
                 torrent.resume()
-        # Enable force start for the torrent - only only activates for downloading torrent without any share-limit sets.
-        if group_config["set_force_start"] and self.arg_onadd and (
-                torrent.state_enum.is_checking or torrent.state_enum.is_downloading):
-            if not self.config.dry_run:
-                torrent.set_force_start(True)
 
     def assign_torrents_to_group(self, torrent_list):
         """Assign torrents to a share limit group based on its tags and category"""
