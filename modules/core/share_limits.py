@@ -377,7 +377,7 @@ class ShareLimits:
             tags=self.group_tag,
         )
         # Resume torrent if it was paused now that the share limit has changed
-        if torrent.state_enum.is_complete and group_config["resume_torrent_after_change"]:
+        if group_config["resume_torrent_after_change"] and torrent.state_enum.is_complete:
             if not self.config.dry_run:
                 torrent.resume()
 
