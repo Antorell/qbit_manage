@@ -131,6 +131,7 @@ class ShareLimits:
                         attr["torrents_deleted_and_contents"] = True
                         t_deleted_and_contents.add(t_name)
                         if not self.config.dry_run:
+                            torrent.pause()  # make sure the torrent is paused before delete
                             self.qbt.tor_delete_recycle(torrent, attr)
                         body += logger.print_line(
                             logger.insert_space("Deleted .torrent AND content files.", 8), self.config.loglevel
