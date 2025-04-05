@@ -354,7 +354,9 @@ class ShareLimits:
                     if not self.config.dry_run:
                         torrent.set_force_start(True)
                 else:
-                    torrent.set_force_start(False)
+                    if not torrent.state_enum.is_paused:
+                        if not self.config.dry_run:
+                            torrent.set_force_start(False)
 
     def tag_and_update_share_limits_for_torrent(self, torrent, group_config):
         """Removes previous share limits tag, updates tag and share limits for a torrent, and resumes the torrent"""
