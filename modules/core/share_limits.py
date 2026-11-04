@@ -492,7 +492,8 @@ class ShareLimits:
                 return []
             if is_tag_in_torrent(self.last_active_tag, torrent.tags):
                 return []
-            torrent.set_share_limits(ratio_limit=max_ratio, seeding_time_limit=max_seeding_time, inactive_seeding_time_limit=-2, share_limit_action="Default")
+            torrent.set_share_limits(ratio_limit=max_ratio, seeding_time_limit=max_seeding_time,
+                                     inactive_seeding_time_limit=-2, share_limit_action="Default", share_limits_mode="Default")
         [logger.print_line(msg, self.config.loglevel) for msg in body if do_print]
         return body
 
@@ -534,7 +535,8 @@ class ShareLimits:
                     if not self.config.dry_run:
                         torrent.add_tags(self.min_seeding_time_tag)
                         torrent_tags += f", {self.min_seeding_time_tag}"
-                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1, share_limit_action="Default")
+                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1,
+                                                 share_limit_action="Default", share_limits_mode="Default")
                         if resume_torrent:
                             torrent.resume()
             return False
@@ -566,7 +568,8 @@ class ShareLimits:
                     if not self.config.dry_run:
                         torrent.add_tags(self.min_num_seeds_tag)
                         torrent_tags += f", {self.min_num_seeds_tag}"
-                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1, share_limit_action="Default")
+                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1,
+                                                 share_limit_action="Default", share_limits_mode="Default")
                         if resume_torrent:
                             torrent.resume()
             return True
@@ -600,7 +603,8 @@ class ShareLimits:
                     if not self.config.dry_run:
                         torrent.add_tags(self.last_active_tag)
                         torrent_tags += f", {self.last_active_tag}"
-                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1, share_limit_action="Default")
+                        torrent.set_share_limits(ratio_limit=-1, seeding_time_limit=-1, inactive_seeding_time_limit=-1,
+                                                 share_limit_action="Default", share_limits_mode="Default")
                         if resume_torrent:
                             torrent.resume()
             return False
